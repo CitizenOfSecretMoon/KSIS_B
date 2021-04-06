@@ -7,6 +7,7 @@ namespace KSIS_B
 {
     class Program
     {
+        //NEW VERSION
         static void Main()
         {
             Console.WriteLine($"Введите адресс построения маршрута:");
@@ -45,7 +46,7 @@ namespace KSIS_B
                 Random random = new Random();
                 Socket host = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.Icmp);
                 IPHostEntry iphe = Dns.GetHostEntry(remoteHost);
-                IPEndPoint iep = new IPEndPoint(iphe.AddressList[0], 0);
+                IPEndPoint iep = new IPEndPoint(iphe.AddressList[0], 0); //формирование пути запроса
                 EndPoint ep = (EndPoint)iep;
                 ICMP packet = new ICMP();
                 Size size = new Size();
@@ -64,14 +65,13 @@ namespace KSIS_B
                     for (int j = 0; j < 3; j++)
                     {
                         sequence = random.Next();
-                        packet = packet.PacketMade(sequence);
+                        packet = packet.PacketMade(i,sequence);
                         packetsize = size.SizeCount(packet);
                         DateTime timestart = DateTime.Now;
                         host.SendTo(packet.getBytes(), packetsize, SocketFlags.None, iep);
 
                         try
                         {
-                            data = new byte[1024];
                             recv = host.ReceiveFrom(data, ref ep);
                             TimeSpan timestop = DateTime.Now - timestart;
                             ICMP response = new ICMP(data, recv);
@@ -106,7 +106,7 @@ namespace KSIS_B
                                 Console.Write("   Превышен интервал ожидания для запроса.");
                             if (j == 2 && ipPoint)
                             {
-                                Console.Write(ep.ToString());
+                                Console.Write("   "+ep.ToString());
                                 ipControll(ep);
                             }
                         }

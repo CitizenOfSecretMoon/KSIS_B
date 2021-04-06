@@ -25,20 +25,18 @@ namespace KSIS_B
             Buffer.BlockCopy(data, 24, Message, 0, MessageSize);
         }
 
-        public ICMP PacketMade(int sequence)
+        public ICMP PacketMade(int identificator,int sequence)
         {
             ICMP pack = new ICMP();
             byte[] data = new byte[1024];
-            //int sequence;
 
-
-            pack.Type = 0x08;
-            pack.Code = 0x00;
+            pack.Type = 0x08; //тип эхо-запрос
+            pack.Code = 0x00; //код недостежимости сети
             pack.Checksum = 0;
-            Buffer.BlockCopy(BitConverter.GetBytes(1), 0, pack.Message, 0, 2);
-            Buffer.BlockCopy(BitConverter.GetBytes(sequence), 0, pack.Message, 2, 2);
-            data = Encoding.ASCII.GetBytes("test packet");
-            Buffer.BlockCopy(data, 0, pack.Message, 4, data.Length);
+            Buffer.BlockCopy(BitConverter.GetBytes(identificator), 0, pack.Message, 0, 2); //заполнение идентификатора
+            Buffer.BlockCopy(BitConverter.GetBytes(sequence), 0, pack.Message, 2, 2); //заполнение порядкового номера
+            data = Encoding.ASCII.GetBytes("test packet"); //подготовка к заполнению содержимого пакета
+            Buffer.BlockCopy(data, 0, pack.Message, 4, data.Length); //заполнение подготвленных данных
             pack.MessageSize = data.Length + 4;
 
             UInt16 chcksum = pack.getChecksum();
